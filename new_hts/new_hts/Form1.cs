@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
@@ -14,15 +15,10 @@ using KiwoomCode;
 
 namespace new_hts {
     public partial class Form1 : Form {
+        static int MAXROWS = 40;
 
-
-
-        string g_code_list;
-        int g_code_list_cnt = 0;
-
-
-
-        protected List<StockInfo> g_stock_info;
+        Control control = new Control();
+        StockInfo[] ViewList = new StockInfo[MAXROWS];
 
         public Form1() {
             InitializeComponent();
@@ -30,8 +26,6 @@ namespace new_hts {
             Initialize_Handler();
 
             API.getInstance.setup_(this);
-
-
         }
 
         public AxKHOpenAPILib.AxKHOpenAPI open() {
@@ -50,25 +44,42 @@ namespace new_hts {
 
             Login.connectServer(this.toolStripStatusLabel1);
 
+
             //Group Box 설정
-            Control.setUserInfo(this);
+            control.setUserInfo(this);
 
         }
+
 
         private void btn종목추가_Click(object sender, EventArgs e) {
             if (Istxt종목코드valid()) {
                 string l_jongmok_cd = txt종목코드.Text.Trim();
-                g_code_list_cnt++;
-                g_code_list += l_jongmok_cd + ';';
+                string l_jongmok_nm = API.getInstance.getAPI().GetMasterCodeName(l_jongmok_cd).Trim();
+                //int l_currentRowCount = stockInfoView.RowCount - 1;
 
-                int lRet = axKHOpenAPI1.SetRealReg(Stock_Initialize.getInstance.GetScrNum(),              // 화면번호
-                                                l_jongmok_cd,    // 종콕코드 리스트
-                                                "9001;10",  // FID번호
-                                                "1");       // 0 : 마지막에 등록한 종목만 실시간
-                msgRealSearchState(lRet);
 
-                //axKHOpenAPI1.SetInputValue("종목코드", l_jongmok_cd);
-                //axKHOpenAPI1.CommRqData("주식기본정보", "OPT10001", 0, Stock_Initialize.getInstance.GetScrNum());
+
+                if (DataGridView.isStockInfoViewInclude(this, l_jongmok_nm)) {
+                }
+                else {
+                    ViewList[stockInfoView.RowCount - 1] = new StockInfo(l_jongmok_cd, l_jongmok_nm, DataGridView.getRowCount());
+                    axKHOpenAPI1.SetInputValue("종목코드", l_jongmok_cd);
+                    axKHOpenAPI1.CommRqData("주식기본정보", "OPT10001", 0, Stock_Initialize.getInstance.GetScrNum());
+
+
+                    stockInfoView.Rows.Add(ViewList[DataGridView.getRowCount()].getStockName()
+                        , ViewList[DataGridView.getRowCount()].getCurrentPrice()
+                        , ViewList[DataGridView.getRowCount()].getRateOfUpDown()
+                        , ViewList[DataGridView.getRowCount()].getAmountOfVolume());
+                    DataGridView.increaseRowCount();
+
+                    int lRet = axKHOpenAPI1.SetRealReg(Stock_Initialize.getInstance.GetScrNum(),              // 화면번호
+                                    l_jongmok_cd,    // 종콕코드 리스트
+                                    "9001;10",  // FID번호
+                                    "1");       // 0 : 마지막에 등록한 종목만 실시간
+                    msgRealSearchState(lRet);
+
+                }
             }
         }
         private bool Istxt종목코드valid() {
@@ -81,10 +92,10 @@ namespace new_hts {
         }
         private void msgRealSearchState(int lRet) {
             if (lRet == 0) {
-                Utility.getInstance.Logger(Log.일반, "실시간 등록이 실행되었습니다");
+                Utility.getInstance.Logger(this, Log.일반, "실시간 등록이 실행되었습니다");
             }
             else {
-                Utility.getInstance.Logger(Log.에러, "실시간 등록이 실패하였습니다");
+                Utility.getInstance.Logger(this, Log.에러, "실시간 등록이 실패하였습니다");
             }
         }
 
@@ -92,12 +103,19 @@ namespace new_hts {
         private void axKHOpenAPI_OnReceiveTrData(object sender, AxKHOpenAPILib._DKHOpenAPIEvents_OnReceiveTrDataEvent e) {
             // OPT1001 : 주식기본정보
             if (e.sRQName == "주식기본정보") {
-                string 종목명_ = axKHOpenAPI1.GetMasterCodeName(txt종목코드.Text);
-                string 현재가_ = axKHOpenAPI1.GetCommData(e.sTrCode, e.sRQName, 0, "현재가");
-                string 등락률_ = axKHOpenAPI1.GetCommData(e.sTrCode, e.sRQName, 0, "등락율");
-                string 거래량_ = axKHOpenAPI1.GetCommData(e.sTrCode, e.sRQName, 0, "거래량");
+                ViewList[DataGridView.getRowCount()].setCurrntPrice(API.getInstance.getAPI().GetCommData(ViewList[DataGridView.getRowCount()].getStockCode()
+                    , ViewList[DataGridView.getRowCount()].getStockName()
+                    , 0
+                    , "현재가").Trim());
+                ViewList[DataGridView.getRowCount()].setRateOfUpDown(API.getInstance.getAPI().GetCommData(ViewList[DataGridView.getRowCount()].getStockCode()
+                    , ViewList[DataGridView.getRowCount()].getStockName()
+                    , 0
+                    , "현재가").Trim());
+                ViewList[DataGridView.getRowCount()].setAmountOfVolume(API.getInstance.getAPI().GetCommData(ViewList[DataGridView.getRowCount()].getStockCode()
+                    , ViewList[DataGridView.getRowCount()].getStockName()
+                    , 0
+                    , "현재가").Trim());
 
-                stockInfoView.Rows.Add(종목명_, 현재가_, 등락률_, 거래량_);
             }
 
             if (e.sRQName == "관심종목정보") {
@@ -120,8 +138,6 @@ realdataevent 에서
         private void axKHOpenAPI_OnReceiveRealData(object sender, AxKHOpenAPILib._DKHOpenAPIEvents_OnReceiveRealDataEvent e) {
             Utility.getInstance.Delay(200);
 
-            Utility.getInstance.Logger(Log.실시간, e.sRealData);
-
 
 
             if (e.sRealType == "주식시세") {
@@ -129,18 +145,52 @@ realdataevent 에서
             }
 
         }
-
-        public void m_thread() {
-            axKHOpenAPI1.CommKwRqData(g_code_list, 0, g_code_list_cnt, 0, "관심종목정보", Stock_Initialize.getInstance.GetScrNum());
-        }
-
     }
 
     public class StockInfo {
-        public String 종목명 { get; set; }
-        public String 현재가 { get; set; }
-        public String 등락률 { get; set; }
-        public String 거래량 { get; set; }
+        private String stockCode;
+        private String stockName;
+        private int rowIndex;
+        private String currentPrice;
+        private String rateOfUpDown;
+        private String amountOfVolume;
+
+        public StockInfo(string jongmok_cd, string jongmok_nm, int index) {
+            stockCode = jongmok_cd;
+            stockName = jongmok_nm;
+            rowIndex = index;
+        }
+
+        public String getStockCode() {
+            return stockCode;
+        }
+        public String getStockName() {
+            return stockName;
+        }
+        public int getRowIndex() {
+            return rowIndex;
+        }
+        public String getCurrentPrice() {
+            return currentPrice;
+        }
+        public String getRateOfUpDown() {
+            return rateOfUpDown;
+        }
+        public String getAmountOfVolume() {
+            return amountOfVolume;
+        }
+
+
+        public void setCurrntPrice(String price) {
+            currentPrice = price;
+        }
+        public void setRateOfUpDown(String rate) {
+            rateOfUpDown = rate;
+        }
+        public void setAmountOfVolume(String tradingAmount) {
+            amountOfVolume = tradingAmount;
+        }
+
     }
 }
 

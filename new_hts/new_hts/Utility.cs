@@ -14,7 +14,6 @@ using System.Security;
 
 namespace new_hts {
     class Utility : SingleTon<Utility> {
-        Form1 utilform = new Form1();
 
 
 
@@ -40,25 +39,25 @@ namespace new_hts {
             return DateTime.Now;
         }
 
-        public void Logger(Log type, string format, params Object[] args) {
+        public void Logger (Form1 utilform, Log type, string format, params Object[] args) {
             string message = String.Format(format, args);
 
             switch (type) {
                 case Log.조회:
-                    this.utilform.lst조회.Items.Add(message);
-                    this.utilform.lst조회.SelectedIndex = this.utilform.lst조회.Items.Count - 1;
+                    utilform.lst조회.Items.Add(message);
+                    utilform.lst조회.SelectedIndex = utilform.lst조회.Items.Count - 1;
                     break;
                 case Log.에러:
-                    this.utilform.lst에러.Items.Add(message);
-                    this.utilform.lst에러.SelectedIndex = this.utilform.lst에러.Items.Count - 1;
+                    utilform.lst에러.Items.Add(message);
+                    utilform.lst에러.SelectedIndex = utilform.lst에러.Items.Count - 1;
                     break;
                 case Log.일반:
-                    this.utilform.lst일반.Items.Add(message);
-                    this.utilform.lst일반.SelectedIndex = this.utilform.lst일반.Items.Count - 1;
+                    utilform.lst일반.Items.Add(message);
+                    utilform.lst일반.SelectedIndex = utilform.lst일반.Items.Count - 1;
                     break;
                 case Log.실시간:
-                    this.utilform.lst실시간.Items.Add(message);
-                    this.utilform.lst실시간.SelectedIndex = this.utilform.lst실시간.Items.Count - 1;
+                    utilform.lst실시간.Items.Add(message);
+                    utilform.lst실시간.SelectedIndex = utilform.lst실시간.Items.Count - 1;
                     break;
                 default:
                     break;

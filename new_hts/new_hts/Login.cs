@@ -7,13 +7,12 @@ using System.Windows.Forms;
 
 namespace new_hts {
     class Login {
-
         public static void connectServer(ToolStripStatusLabel Label) {
             int result = API.getInstance.getAPI().CommConnect();
 
             if (result == 0) {
                 Label.Text = "로그인 중...";
-                for (;;) {
+                for (; ; ) {
                     int state = API.getInstance.getAPI().GetConnectState(); //로그인 완료 여부를 가져옴
                     if (state == 1) //로그인이 완료되면
                     {
@@ -27,5 +26,6 @@ namespace new_hts {
             }
             Label.Text = "로그인 완료"; //화면 하단 상태란에 메시지 출력
         }
+
     }
 }

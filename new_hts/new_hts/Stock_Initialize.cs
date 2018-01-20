@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 
 namespace new_hts {
     class Stock_Initialize : SingleTon<Stock_Initialize> {
-        Form1 form = new Form1();
         int _scrNum = 5000;
 
 
