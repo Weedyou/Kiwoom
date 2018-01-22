@@ -38,48 +38,25 @@ namespace new_hts {
 
         }
 
-
         //클릭함수/////////////////////////
         private void 로그인ToolStripMenuItem_Click(object sender, EventArgs e) {
 
             Login.connectServer(this.toolStripStatusLabel1);
-
 
             //Group Box 설정
             control.setUserInfo(this);
 
         }
 
-
         private void btn종목추가_Click(object sender, EventArgs e) {
             if (Istxt종목코드valid()) {
                 string l_jongmok_cd = txt종목코드.Text.Trim();
                 string l_jongmok_nm = API.getInstance.getAPI().GetMasterCodeName(l_jongmok_cd).Trim();
-                //int l_currentRowCount = stockInfoView.RowCount - 1;
 
+                ViewList[stockInfoView.RowCount - 1] = new StockInfo(l_jongmok_cd, l_jongmok_nm, DataGridView.getRowCount());
+                axKHOpenAPI1.SetInputValue("종목코드", l_jongmok_cd);
+                axKHOpenAPI1.CommRqData("주식기본정보", "OPT10001", 0, Stock_Initialize.getInstance.GetScrNum());
 
-
-                if (DataGridView.isStockInfoViewInclude(this, l_jongmok_nm)) {
-                }
-                else {
-                    ViewList[stockInfoView.RowCount - 1] = new StockInfo(l_jongmok_cd, l_jongmok_nm, DataGridView.getRowCount());
-                    axKHOpenAPI1.SetInputValue("종목코드", l_jongmok_cd);
-                    axKHOpenAPI1.CommRqData("주식기본정보", "OPT10001", 0, Stock_Initialize.getInstance.GetScrNum());
-
-
-                    stockInfoView.Rows.Add(ViewList[DataGridView.getRowCount()].getStockName()
-                        , ViewList[DataGridView.getRowCount()].getCurrentPrice()
-                        , ViewList[DataGridView.getRowCount()].getRateOfUpDown()
-                        , ViewList[DataGridView.getRowCount()].getAmountOfVolume());
-                    DataGridView.increaseRowCount();
-
-                    int lRet = axKHOpenAPI1.SetRealReg(Stock_Initialize.getInstance.GetScrNum(),              // 화면번호
-                                    l_jongmok_cd,    // 종콕코드 리스트
-                                    "9001;10",  // FID번호
-                                    "1");       // 0 : 마지막에 등록한 종목만 실시간
-                    msgRealSearchState(lRet);
-
-                }
             }
         }
         private bool Istxt종목코드valid() {
@@ -90,6 +67,45 @@ namespace new_hts {
                 return false;
             }
         }
+
+        private void 로그아웃ToolStripMenuItem_Click(object sender, EventArgs e) {
+            Stock_Initialize.getInstance.DisconnectAllRealData();
+            API.getInstance.getAPI().CommTerminate();
+            Utility.getInstance.Logger(this, Log.일반, "로그아웃");
+        }
+
+
+
+
+
+        //이벤트함수//////////////////////
+        private void axKHOpenAPI_OnReceiveTrData(object sender, AxKHOpenAPILib._DKHOpenAPIEvents_OnReceiveTrDataEvent e) {
+            // OPT1001 : 주식기본정보
+            if (e.sRQName == "주식기본정보") {
+
+                ViewList[DataGridView.getRowCount()].setCurrentData(API.getInstance.getAPI().GetCommData(e.sTrCode, e.sRQName, 0, "현재가")
+                    , API.getInstance.getAPI().GetCommData(e.sTrCode, e.sRQName, 0, "등락율")
+                    , API.getInstance.getAPI().GetCommData(e.sTrCode, e.sRQName, 0, "거래량"));
+
+                stockInfoView.Rows.Add(ViewList[DataGridView.getRowCount()].getStockName()
+                                                , ViewList[DataGridView.getRowCount()].getCurrentPrice()
+                                                , ViewList[DataGridView.getRowCount()].getRateOfUpDown()
+                                                , ViewList[DataGridView.getRowCount()].getAmountOfVolume());
+                DataGridView.increaseRowCount();
+
+                int lRet = axKHOpenAPI1.SetRealReg(Stock_Initialize.getInstance.GetScrNum(),              // 화면번호
+                                ViewList[DataGridView.getRowCount()].getStockCode(),    // 종콕코드 리스트
+                                "9001;10",  // FID번호
+                                "1");       // 0 : 마지막에 등록한 종목만 실시간
+                msgRealSearchState(lRet);
+
+            }
+
+            if (e.sRQName == "관심종목정보") {
+
+            }
+        }
+
         private void msgRealSearchState(int lRet) {
             if (lRet == 0) {
                 Utility.getInstance.Logger(this, Log.일반, "실시간 등록이 실행되었습니다");
@@ -99,53 +115,43 @@ namespace new_hts {
             }
         }
 
-        //이벤트함수//////////////////////
-        private void axKHOpenAPI_OnReceiveTrData(object sender, AxKHOpenAPILib._DKHOpenAPIEvents_OnReceiveTrDataEvent e) {
-            // OPT1001 : 주식기본정보
-            if (e.sRQName == "주식기본정보") {
-                ViewList[DataGridView.getRowCount()].setCurrntPrice(API.getInstance.getAPI().GetCommData(ViewList[DataGridView.getRowCount()].getStockCode()
-                    , ViewList[DataGridView.getRowCount()].getStockName()
-                    , 0
-                    , "현재가").Trim());
-                ViewList[DataGridView.getRowCount()].setRateOfUpDown(API.getInstance.getAPI().GetCommData(ViewList[DataGridView.getRowCount()].getStockCode()
-                    , ViewList[DataGridView.getRowCount()].getStockName()
-                    , 0
-                    , "현재가").Trim());
-                ViewList[DataGridView.getRowCount()].setAmountOfVolume(API.getInstance.getAPI().GetCommData(ViewList[DataGridView.getRowCount()].getStockCode()
-                    , ViewList[DataGridView.getRowCount()].getStockName()
-                    , 0
-                    , "현재가").Trim());
 
-            }
-
-            if (e.sRQName == "관심종목정보") {
-
-            }
-        }
-
-
-
-        /*버튼클릭 - SetRealReg 호출 - RealTrData호출 - 여기서 gridview 조작
-
-realdataevent 에서
-서버로부터 호출이오면 호출받은 종목명을 그리드뷰에서 검색
-
-존재한다면 수정해주면되고
-
-존재하지않는다면 행추가해주면됨
-
-*/
         private void axKHOpenAPI_OnReceiveRealData(object sender, AxKHOpenAPILib._DKHOpenAPIEvents_OnReceiveRealDataEvent e) {
-            Utility.getInstance.Delay(200);
+
+            if (e.sRealType == "주식체결") {
+
+                int rowCount = getRowIndex(e.sRealKey);
+
+                ViewList[rowCount].setCurrentData(API.getInstance.getAPI().GetCommRealData(e.sRealType, 10).Trim()
+                    , API.getInstance.getAPI().GetCommRealData(e.sRealType, 12).Trim()
+                    , API.getInstance.getAPI().GetCommRealData(e.sRealType, 13).Trim());
+
+                Utility.getInstance.Logger(this, Log.실시간, "종목코드 : {0} | RealType : {1} | RealData : {2}",
+    e.sRealKey, e.sRealType, e.sRealData);
+                Utility.getInstance.Logger(this, Log.일반,  ViewList[rowCount].getCurrentPrice());
 
 
-
-            if (e.sRealType == "주식시세") {
-
+                stockInfoView.Rows[rowCount].SetValues(ViewList[rowCount].getStockName()
+                                                       , ViewList[rowCount].getCurrentPrice()
+                                                       , ViewList[rowCount].getRateOfUpDown()
+                                                       , ViewList[rowCount].getAmountOfVolume());
             }
-
         }
+
+        private int getRowIndex(string code) {
+            for (int i = 0; i < stockInfoView.RowCount-1; i++) {
+                if(stockInfoView["종목명", i].Value.ToString() == API.getInstance.getAPI().GetMasterCodeName(code)) {
+                    return i;
+                }
+            }
+            return -1;
+        }
+
+
+
     }
+
+
 
     public class StockInfo {
         private String stockCode;
@@ -160,7 +166,7 @@ realdataevent 에서
             stockName = jongmok_nm;
             rowIndex = index;
         }
-
+        //가져오기함수
         public String getStockCode() {
             return stockCode;
         }
@@ -181,7 +187,13 @@ realdataevent 에서
         }
 
 
-        public void setCurrntPrice(String price) {
+        //설정함수
+        public void setCurrentData(String price, String rate, String tradingAmount) {
+            setCurrentPrice(price);
+            setRateOfUpDown(rate);
+            setAmountOfVolume(tradingAmount);
+        }
+        public void setCurrentPrice(String price) {
             currentPrice = price;
         }
         public void setRateOfUpDown(String rate) {

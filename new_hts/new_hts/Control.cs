@@ -53,15 +53,15 @@ namespace new_hts {
         }
 
 
-        public static int getRowIndex(Form1 form, string jongmok_name) {
-            for (int i = 0; i < form.stockInfoView.RowCount - 1; i++) {
-                if (form.stockInfoView["종목명", i].Value.ToString() == jongmok_name) {
-                    return i;
-                }
-            }
+        //public static int getRowIndex(Form1 form, string jongmok_name) {
+        //    for (int i = 0; i < form.stockInfoView.RowCount - 1; i++) {
+        //        if (form.stockInfoView["종목명", i].Value.ToString() == jongmok_name) {
+        //            return i;
+        //        }
+        //    }
 
-            return -1;
-        }
+        //    return -1;
+        //}
 
         public static bool isStockInfoViewInclude(Form1 form, string jongmok_name) {
             for (int i = 0; i < form.stockInfoView.RowCount - 1; i++) {
@@ -71,5 +71,9 @@ namespace new_hts {
             }
             return false;
         }
+
+        //색상부여
+
+
     }
 }

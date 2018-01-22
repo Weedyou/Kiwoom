@@ -9,6 +9,9 @@ namespace new_hts {
         int _scrNum = 5000;
 
 
+
+
+
         public string GetScrNum() {
             if (_scrNum < 9999)
                 _scrNum++;
@@ -18,7 +21,7 @@ namespace new_hts {
             return _scrNum.ToString();
         }
 
-        private void DisconnectAllRealData() {
+        public void DisconnectAllRealData() {
             for (int i = _scrNum; i > 5000; i--) {
                 API.getInstance.getAPI().DisconnectRealData(i.ToString());
             }
