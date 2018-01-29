@@ -8,15 +8,14 @@ namespace new_hts {
     class Stock_Initialize : SingleTon<Stock_Initialize> {
         int _scrNum = 5000;
 
-
-
+        private Boolean g_is_thread = false; //false이면 스레드 미생성, true이면 스레드 생성
 
 
         public string GetScrNum() {
             if (_scrNum < 9999)
                 _scrNum++;
             else
-                _scrNum = 5000;
+                _scrNum = 1000;
 
             return _scrNum.ToString();
         }
@@ -28,7 +27,20 @@ namespace new_hts {
 
             _scrNum = 5000;
         }
+
+        public bool isThreadRunning() {
+            if (g_is_thread == true) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+        public void setThreadRunning() {
+            g_is_thread = true;
+        }
+        public void setThreadStop() {
+            g_is_thread = false;
+        }
     }
-
-
 }

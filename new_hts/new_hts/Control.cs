@@ -1,8 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Forms;
+using KiwoomCode;
 
 namespace new_hts {
     class Control {
@@ -39,7 +46,7 @@ namespace new_hts {
 
     }
 
-    class DataGridView : Control {
+    class DataGridView {
         private static int rowCount = 0;
 
         public static int  getRowCount() {
@@ -52,17 +59,6 @@ namespace new_hts {
             rowCount--;
         }
 
-
-        //public static int getRowIndex(Form1 form, string jongmok_name) {
-        //    for (int i = 0; i < form.stockInfoView.RowCount - 1; i++) {
-        //        if (form.stockInfoView["종목명", i].Value.ToString() == jongmok_name) {
-        //            return i;
-        //        }
-        //    }
-
-        //    return -1;
-        //}
-
         public static bool isStockInfoViewInclude(Form1 form, string jongmok_name) {
             for (int i = 0; i < form.stockInfoView.RowCount - 1; i++) {
                 if (form.stockInfoView["종목명", i].Value.ToString() == jongmok_name) {
@@ -72,7 +68,9 @@ namespace new_hts {
             return false;
         }
 
+
         //색상부여
+
 
 
     }

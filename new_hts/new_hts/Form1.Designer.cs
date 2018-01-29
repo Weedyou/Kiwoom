@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.옵션ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -40,6 +41,7 @@
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.btn스레드시작 = new System.Windows.Forms.Button();
             this.btn종목추가 = new System.Windows.Forms.Button();
             this.txt종목코드 = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
@@ -57,12 +59,15 @@
             this.lst에러 = new System.Windows.Forms.ListBox();
             this.lst실시간 = new System.Windows.Forms.ListBox();
             this.axKHOpenAPI1 = new AxKHOpenAPILib.AxKHOpenAPI();
+            this.axKHOpenAPI2 = new AxKHOpenAPILib.AxKHOpenAPI();
+            this.btn스레드중지 = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.stockInfoView)).BeginInit();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.axKHOpenAPI1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.axKHOpenAPI2)).BeginInit();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -71,7 +76,7 @@
             this.옵션ToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(1544, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(1394, 24);
             this.menuStrip1.TabIndex = 1;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -88,21 +93,21 @@
             // 로그인ToolStripMenuItem
             // 
             this.로그인ToolStripMenuItem.Name = "로그인ToolStripMenuItem";
-            this.로그인ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.로그인ToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
             this.로그인ToolStripMenuItem.Text = "로그인";
             this.로그인ToolStripMenuItem.Click += new System.EventHandler(this.로그인ToolStripMenuItem_Click);
             // 
             // 로그아웃ToolStripMenuItem
             // 
             this.로그아웃ToolStripMenuItem.Name = "로그아웃ToolStripMenuItem";
-            this.로그아웃ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.로그아웃ToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
             this.로그아웃ToolStripMenuItem.Text = "로그아웃";
             this.로그아웃ToolStripMenuItem.Click += new System.EventHandler(this.로그아웃ToolStripMenuItem_Click);
             // 
             // 계좌조회ToolStripMenuItem
             // 
             this.계좌조회ToolStripMenuItem.Name = "계좌조회ToolStripMenuItem";
-            this.계좌조회ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.계좌조회ToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
             this.계좌조회ToolStripMenuItem.Text = "계좌조회";
             // 
             // groupBox1
@@ -153,6 +158,8 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.btn스레드중지);
+            this.groupBox2.Controls.Add(this.btn스레드시작);
             this.groupBox2.Controls.Add(this.btn종목추가);
             this.groupBox2.Controls.Add(this.txt종목코드);
             this.groupBox2.Controls.Add(this.label4);
@@ -160,10 +167,20 @@
             this.groupBox2.Controls.Add(this.label3);
             this.groupBox2.Location = new System.Drawing.Point(475, 129);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(200, 110);
+            this.groupBox2.Size = new System.Drawing.Size(200, 139);
             this.groupBox2.TabIndex = 3;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "주문정보";
+            // 
+            // btn스레드시작
+            // 
+            this.btn스레드시작.Location = new System.Drawing.Point(6, 102);
+            this.btn스레드시작.Name = "btn스레드시작";
+            this.btn스레드시작.Size = new System.Drawing.Size(75, 23);
+            this.btn스레드시작.TabIndex = 13;
+            this.btn스레드시작.Text = "스레드시작";
+            this.btn스레드시작.UseVisualStyleBackColor = true;
+            this.btn스레드시작.Click += new System.EventHandler(this.btn실시간_Click);
             // 
             // btn종목추가
             // 
@@ -209,14 +226,24 @@
             // 
             // stockInfoView
             // 
+            this.stockInfoView.BackgroundColor = System.Drawing.SystemColors.Window;
             this.stockInfoView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.stockInfoView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.종목명,
             this.현재가,
             this.등락률,
             this.거래량});
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("굴림", 9F);
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.stockInfoView.DefaultCellStyle = dataGridViewCellStyle1;
             this.stockInfoView.Location = new System.Drawing.Point(13, 28);
             this.stockInfoView.Name = "stockInfoView";
+            this.stockInfoView.ReadOnly = true;
             this.stockInfoView.RowTemplate.Height = 23;
             this.stockInfoView.Size = new System.Drawing.Size(456, 334);
             this.stockInfoView.TabIndex = 4;
@@ -225,29 +252,34 @@
             // 
             this.종목명.HeaderText = "종목명";
             this.종목명.Name = "종목명";
+            this.종목명.ReadOnly = true;
             // 
             // 현재가
             // 
             this.현재가.HeaderText = "현재가";
             this.현재가.Name = "현재가";
+            this.현재가.ReadOnly = true;
             // 
             // 등락률
             // 
             this.등락률.HeaderText = "등락률";
             this.등락률.Name = "등락률";
+            this.등락률.ReadOnly = true;
+            this.등락률.Width = 80;
             // 
             // 거래량
             // 
             this.거래량.HeaderText = "거래량";
             this.거래량.Name = "거래량";
+            this.거래량.ReadOnly = true;
             // 
             // statusStrip1
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripStatusLabel1});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 720);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 586);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(1544, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(1394, 22);
             this.statusStrip1.TabIndex = 5;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -302,11 +334,31 @@
             this.axKHOpenAPI1.Size = new System.Drawing.Size(55, 29);
             this.axKHOpenAPI1.TabIndex = 10;
             // 
+            // axKHOpenAPI2
+            // 
+            this.axKHOpenAPI2.Enabled = true;
+            this.axKHOpenAPI2.Location = new System.Drawing.Point(623, 561);
+            this.axKHOpenAPI2.Name = "axKHOpenAPI2";
+            this.axKHOpenAPI2.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("axKHOpenAPI2.OcxState")));
+            this.axKHOpenAPI2.Size = new System.Drawing.Size(61, 22);
+            this.axKHOpenAPI2.TabIndex = 12;
+            // 
+            // btn스레드중지
+            // 
+            this.btn스레드중지.Location = new System.Drawing.Point(119, 102);
+            this.btn스레드중지.Name = "btn스레드중지";
+            this.btn스레드중지.Size = new System.Drawing.Size(75, 23);
+            this.btn스레드중지.TabIndex = 14;
+            this.btn스레드중지.Text = "스레드중지";
+            this.btn스레드중지.UseVisualStyleBackColor = true;
+            this.btn스레드중지.Click += new System.EventHandler(this.btn스레드중지_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1544, 742);
+            this.ClientSize = new System.Drawing.Size(1394, 608);
+            this.Controls.Add(this.axKHOpenAPI2);
             this.Controls.Add(this.axKHOpenAPI1);
             this.Controls.Add(this.lst실시간);
             this.Controls.Add(this.lst에러);
@@ -330,6 +382,7 @@
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.axKHOpenAPI1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.axKHOpenAPI2)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -359,11 +412,14 @@
         public System.Windows.Forms.ListBox lst조회;
         public System.Windows.Forms.ListBox lst에러;
         public System.Windows.Forms.ListBox lst실시간;
-        public System.Windows.Forms.DataGridViewTextBoxColumn 종목명;
-        public System.Windows.Forms.DataGridViewTextBoxColumn 현재가;
-        public System.Windows.Forms.DataGridViewTextBoxColumn 등락률;
-        public System.Windows.Forms.DataGridViewTextBoxColumn 거래량;
         private AxKHOpenAPILib.AxKHOpenAPI axKHOpenAPI1;
+        private System.Windows.Forms.DataGridViewTextBoxColumn 종목명;
+        private System.Windows.Forms.DataGridViewTextBoxColumn 현재가;
+        private System.Windows.Forms.DataGridViewTextBoxColumn 등락률;
+        private System.Windows.Forms.DataGridViewTextBoxColumn 거래량;
+        private AxKHOpenAPILib.AxKHOpenAPI axKHOpenAPI2;
+        private System.Windows.Forms.Button btn스레드시작;
+        private System.Windows.Forms.Button btn스레드중지;
     }
 }
 

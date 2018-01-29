@@ -39,7 +39,7 @@ namespace new_hts {
             return DateTime.Now;
         }
 
-        public void Logger (Form1 utilform, Log type, string format, params Object[] args) {
+        public void Logger (Form1 utilform, Log type, String format, params Object[] args) {
             string message = String.Format(format, args);
 
             switch (type) {
@@ -63,6 +63,45 @@ namespace new_hts {
                     break;
             }
         }
+
+        public String getCurrentDate() {
+            DateTime date = new DateTime();
+            date = DateTime.Now;
+            String result = date.ToString("yyyyMMdd");
+            return result.Trim();
+        }
+
+        public String getCurrentTime() {
+            DateTime time = new DateTime();
+            time = DateTime.Now;
+            String result = time.ToString("HHmmss");
+            return result.Trim();
+        }
+
+        public  String separateStringWithComma(String tradingAmount) {
+            int length = tradingAmount.Length;
+            string result = null;
+
+            if (length > 0 && length <= 3) {
+                return tradingAmount;
+            }
+            else if (length > 3 && length <= 6) {
+                result = tradingAmount.Substring(length - 3);
+                result = result.Insert(0, ",");
+                result = result.Insert(0, tradingAmount.Substring(0, length - 3));
+                return result;
+            }
+            else if (length > 6 && length <= 9) {
+                result = tradingAmount.Substring(length - 3);
+                result = result.Insert(0, ",");
+                result = result.Insert(0, tradingAmount.Substring(length - 6, 3));
+                result = result.Insert(0, ",");
+                result = result.Insert(0, tradingAmount.Substring(0, length - 6));
+                return result;
+            }
+            return "a";
+        }
+
 
     }
 }
